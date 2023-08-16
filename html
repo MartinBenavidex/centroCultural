@@ -1,0 +1,93 @@
+<!DOCTYPE html>
+<html lang="es">
+    <head>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <title>El Espacio Cultural</title>
+        <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/sweetalert2@11.0.18/dist/sweetalert2.min.css">
+        <style>
+            body {
+                font-family: Arial, sans-serif;
+                margin: 0;
+                padding: 0;
+            }
+    
+            .container-wrapper {
+                display: flex;
+                flex-direction: column;
+                align-items: center;
+                padding: 20px;
+            }
+    
+            .container {
+                margin: 20px 0;
+                padding: 20px;
+                border: 1px solid #ccc;
+                background-color: #f9f9f9;
+                box-shadow: 0px 2px 4px rgba(0, 0, 0, 0.1);
+            }
+    
+            .dark-mode-button {
+                position: fixed;
+                top: 10px;
+                right: 10px;
+                background-color: black;
+                color: white;
+                border: none;
+                padding: 10px 15px;
+                cursor: pointer;
+            }
+    
+            .buy-button {
+                background-color: #007bff;
+                color: white;
+                border: none;
+                padding: 5px 10px;
+                cursor: pointer;
+            }
+        </style>
+    </head>
+    <body>
+        <button class="dark-mode-button" onclick="alternarDarkMode()">DARK MODE</button>
+    
+        <div class="container-wrapper">
+            <div class="container">
+                <h1>El Espacio Cultural</h1>
+            </div>
+    
+            <div class="container">
+                <h3>Agregar nuevo evento</h3>
+                <label for="nombre">Nombre:</label><br>
+                <input type="text" id="nombre" class="input-field"><br>
+                <label for="fecha">Fecha (11/11/1111):</label><br>
+                <input type="text" id="fecha" class="input-field"><br>
+                <label for="descripcion">Descripción:</label><br>
+                <input type="text" id="descripcion" class="input-field"><br>
+                <button onclick="agregarEvento()" class="submit-button">Agregar evento</button>
+            </div>
+    
+            <div class="container">
+                <h3>Agenda Cultural</h3>
+                <button onclick="mostrarEventos()">Mostrar eventos</button>
+                <ul id="listaEventos"></ul>
+            </div>
+    
+
+    
+            <div class="container">
+                <h3>Seleccionar evento</h3>
+                <label for="eventoSeleccionado">Seleccione un evento:</label>
+                <select id="eventoSeleccionado"></select><br>
+                <button onclick="agregarAlCarrito()" class="buy-button">Reservar entrada</button>
+            </div>
+    
+            <div class="container">
+                <h3>Carrito de compras</h3>
+                <p>Total: <span id="totalCarrito">0</span> pesos argentinos</p>
+                <button onclick="abonarReservas()" class="buy-button">Abonar Reservas</button>
+            </div>
+        </div>
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11.0.18/dist/sweetalert2.all.min.js"></script>
+    <script src="C:\Users\Win10\Documents\Martin B\JavaScrip\espacioCultural.js"></script>
+</body>
+</html>
