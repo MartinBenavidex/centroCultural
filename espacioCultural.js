@@ -100,21 +100,4 @@ function abonarReservas() {
         });
     }
 }
-
-
-let darkMode = false;
-
-function alternarDarkMode() {
-    darkMode = !darkMode;
-    cambiarColorFondo();
-}
-
-function cambiarColorFondo() {
-    const body = document.body;
-    if (darkMode) {
-        body.style.backgroundColor = "darkgray";
-    } else {
-        body.style.backgroundColor = "#f9f9f9";
-    }
-}
 let totalCarrito = 0;
