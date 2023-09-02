@@ -8,7 +8,7 @@ cabeza.appendChild(titulo)
 const fotter = d.querySelector('#p-footer');
 const anio = new Date().getFullYear();
 fotter.innerHTML = `<a href="https://www.instagram.com/centroculturalelespaciook/"_blank">&copy | ${banner} | ${anio}</a>`
-//const eventosCulturales = [];
+
 
 const eventosCulturales = JSON.parse(localStorage.getItem('eventos')) || [];
 
@@ -59,7 +59,7 @@ function agregarAlCarrito() {
     const totalCarritoElement = document.getElementById("totalCarrito");
 
     if (eventoSeleccionado !== "") {
-        totalCarrito += 1000; // Precio de la entrada en pesos argentinos
+        totalCarrito += 1000;
         totalCarritoElement.textContent = totalCarrito;
         Swal.fire({
             icon: 'success',
