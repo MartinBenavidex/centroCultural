@@ -1,154 +1,153 @@
-const d = document;
-const cuerpo = d.body;
-const cabeza = d.head;
-const titulo = d.createElement('title');
-const cabecera = d.getElementById('header');
-const banner = titulo.innerText = 'El Espacio Cultural';
-cabeza.appendChild(titulo);
+document.addEventListener("DOMContentLoaded", function () {
+    const d = document;
+    const eventosCulturales = JSON.parse(localStorage.getItem('eventos')) || [];
+    const listaEventos = d.getElementById("listaEventos");
+    const eventoSeleccionado = d.getElementById("eventoSeleccionado");
+    const totalCarritoElement = d.getElementById("totalCarrito");
+    const generarEventoBtn = d.getElementById("generarEventoBtn");
+    const nombreInput = d.getElementById("nombre");
+    const fechaInput = d.getElementById("fecha");
+    const descripcionInput = d.getElementById("descripcion");
+    const searchForm = d.getElementById("searchForm");
 
-const fotter = d.querySelector('#p-footer');
-const anio = new Date().getFullYear();
-fotter.innerHTML = `<a href="https://www.instagram.com/centroculturalelespaciook/" target="_blank">&copy; ${banner} | ${anio}</a>`;
+    generarEventoBtn.addEventListener("click", agregarEvento);
 
-const eventosCulturales = JSON.parse(localStorage.getItem('eventos')) || [];
+    function generarEventoFicticio() {
+        const nombreEvento = faker.company.companyName();
+        const fechaEvento = faker.date.future();
+        const descripcionEvento = faker.lorem.sentence();
 
-const listaEventos = d.getElementById("listaEventos");
-const eventoSeleccionado = d.getElementById("eventoSeleccionado");
-const totalCarritoElement = d.getElementById("totalCarrito");
-const generarEventoBtn = d.getElementById("generarEventoBtn");
-const nombreInput = d.getElementById("nombre");
-const fechaInput = d.getElementById("fecha");
-const descripcionInput = d.getElementById("descripcion");
+        return {
+            nombre: nombreEvento,
+            fecha: fechaEvento,
+            descripcion: descripcionEvento,
+        }
+    }
 
-generarEventoBtn.addEventListener("click", agregarEvento);
+    searchForm.addEventListener("submit", function (e) {
+        e.preventDefault();
 
-function generarEventoFicticio() {
-    const nombreEvento = faker.company.companyName();
-    const fechaEvento = faker.date.future();
-    const descripcionEvento = faker.lorem.sentence();
+        const nombreBusqueda = nombreInput.value.trim();
+        const fechaBusqueda = fechaInput.value;
 
-    return {
-        nombre: nombreEvento,
-        fecha: fechaEvento,
-        descripcion: descripcionEvento,
-    };
-}
-
-function agregarEvento() {
-    const evento = generarEventoFicticio();
-    eventosCulturales.push(evento);
-    localStorage.setItem('eventos', JSON.stringify(eventosCulturales));
-    mostrarEventos();
-    actualizarEventosDropdown();
-}
-
-function mostrarEventos() {
-    listaEventos.innerHTML = "";
-
-    eventosCulturales.forEach((evento, index) => {
-        const li = document.createElement("li");
-        li.textContent = `${index + 1}. ${evento.nombre} - ${evento.fecha}`;
-        
-        const btnEditar = document.createElement("button");
-        btnEditar.textContent = "Editar";
-        btnEditar.addEventListener("click", () => {
-            editarEvento(index);
+        const resultadosFiltrados = eventosCulturales.filter(evento => {
+            const nombreCoincide = evento.nombre.toLowerCase().includes(nombreBusqueda.toLowerCase());
+            const fechaCoincide = fechaBusqueda === "" || evento.fecha.includes(fechaBusqueda);
+            return nombreCoincide && fechaCoincide;
         });
 
-        const btnEliminar = document.createElement("button");
-        btnEliminar.textContent = "Eliminar";
-        btnEliminar.addEventListener("click", () => {
-            eliminarEvento(index);
-        });
-
-        li.appendChild(btnEditar);
-        li.appendChild(btnEliminar);
-        listaEventos.appendChild(li);
+        mostrarResultados(resultadosFiltrados);
     });
-}
-function editarEvento(index) {
-    const evento = eventosCulturales[index];
-    const nuevoNombre = prompt("Editar nombre:", evento.nombre);
-    const nuevaFecha = prompt("Editar fecha:", evento.fecha);
-    const nuevaDescripcion = prompt("Editar descripción:", evento.descripcion);
 
-    if (nuevoNombre !== null && nuevaFecha !== null && nuevaDescripcion !== null) {
-        evento.nombre = nuevoNombre;
-        evento.fecha = nuevaFecha;
-        evento.descripcion = nuevaDescripcion;
+    function mostrarResultados(resultadosArray) {
+        resultados.innerHTML = "";
 
+        if (resultadosArray.length === 0) {
+            resultados.innerHTML = "<p>No se encontraron resultados.</p>";
+            return;
+        }
+
+        resultadosArray.forEach((evento, index) => {
+            const li = document.createElement("li");
+            li.textContent = `${evento.nombre} - ${evento.fecha}`;
+            resultados.appendChild(li);
+
+            // Agregar botón "Reservar entrada" con atributo data-event-index
+            const reservarEntradaBtn = document.createElement("button");
+            reservarEntradaBtn.textContent = "Reservar entrada";
+            reservarEntradaBtn.classList.add("reservar-entrada-btn");
+            reservarEntradaBtn.setAttribute("data-event-index", index);
+            li.appendChild(reservarEntradaBtn);
+        });
+
+        // Agrega un event listener para los botones "Reservar entrada" una vez que se muestran los resultados
+        const reservarEntradaBtns = document.querySelectorAll(".reservar-entrada-btn");
+        reservarEntradaBtns.forEach(btn => {
+            btn.addEventListener("click", () => {
+                agregarAlCarrito(eventosCulturales, btn.getAttribute("data-event-index"));
+            });
+        });
+    }
+
+    function agregarEvento() {
+        const evento = generarEventoFicticio();
+        eventosCulturales.push(evento);
         localStorage.setItem('eventos', JSON.stringify(eventosCulturales));
         mostrarEventos();
         actualizarEventosDropdown();
     }
-}
 
-function eliminarEvento(index) {
-    eventosCulturales.splice(index, 1);
-    localStorage.setItem('eventos', JSON.stringify(eventosCulturales));
-    mostrarEventos();
-    actualizarEventosDropdown();
-}
+    function actualizarEventosDropdown() {
+        eventoSeleccionado.innerHTML = "";
 
-function actualizarEventosDropdown() {
-    eventoSeleccionado.innerHTML = "";
-
-    eventosCulturales.forEach((evento, index) => {
-        const option = document.createElement("option");
-        option.value = index;
-        option.textContent = evento.nombre;
-        eventoSeleccionado.appendChild(option);
-    });
-}
-
-function agregarAlCarrito() {
-    const eventoSeleccionadoIndex = eventoSeleccionado.value;
-
-    if (eventoSeleccionadoIndex !== "") {
-        totalCarritoElement.textContent = `${parseInt(totalCarritoElement.textContent) + 1000}`;
-        Swal.fire({
-            icon: 'success',
-            title: 'Entrada sumada al carrito',
-            showConfirmButton: false,
-            timer: 1500
+        eventosCulturales.forEach((evento, index) => {
+            const option = document.createElement("option");
+            option.value = index;
+            option.textContent = evento.nombre;
+            eventoSeleccionado.appendChild(option);
         });
     }
-}
 
-function abonarReservas() {
-    if (totalCarritoElement.textContent > 0) {
-        Swal.fire({
-            title: 'Abonar Reservas',
-            text: `El total a abonar es: ${totalCarritoElement.textContent} pesos argentinos`,
-            icon: 'info',
-            showCancelButton: true,
-            confirmButtonText: 'Confirmar',
-            cancelButtonText: 'Cancelar'
-        }).then((result) => {
-            if (result.isConfirmed) {
+    function agregarAlCarrito(eventos, index) {
+        if (index !== "") {
+            const eventoSeleccionadoIndex = parseInt(index);
+
+            if (eventoSeleccionadoIndex >= 0 && eventoSeleccionadoIndex < eventos.length) {
+                const eventoSeleccionado = eventos[eventoSeleccionadoIndex];
+                console.log("Evento seleccionado:", eventoSeleccionado);
+
+                totalCarritoElement.textContent = `${parseInt(totalCarritoElement.textContent) + 1000}`;
                 Swal.fire({
                     icon: 'success',
-                    title: 'Reservas abonadas correctamente',
+                    title: 'Entrada sumada al carrito',
                     showConfirmButton: false,
                     timer: 1500
                 });
-
-                totalCarritoElement.textContent = '0';
+            } else {
+                console.error("Índice de evento no válido.");
             }
-        });
-    } else {
-        Swal.fire({
-            icon: 'warning',
-            title: 'El carrito está vacío',
-            showConfirmButton: false,
-            timer: 1500
-        });
+        }
     }
-}
+    function abonarReservas() {
+        const totalCarrito = parseInt(totalCarritoElement.textContent);
+    
+        if (totalCarrito > 0) {
+            Swal.fire({
+                title: 'Abonar Reservas',
+                text: `El total a abonar es: ${totalCarrito} pesos argentinos`,
+                icon: 'info',
+                showCancelButton: true,
+                confirmButtonText: 'Confirmar',
+                cancelButtonText: 'Cancelar'
+            }).then((result) => {
+                if (result.isConfirmed) {
+                    Swal.fire({
+                        icon: 'success',
+                        title: 'Reservas abonadas correctamente',
+                        showConfirmButton: false,
+                        timer: 1500
+                    });
+    
+                    totalCarritoElement.textContent = '0';
+                }
+            });
+        } else {
+            Swal.fire({
+                icon: 'warning',
+                title: 'El carrito está vacío',
+                showConfirmButton: false,
+                timer: 1500
+            });
+        }
+    }
+    
+    const abonarReservasBtn = document.getElementById("abonarReservasBtn");
+    abonarReservasBtn.addEventListener("click", abonarReservas);
 
-function init() {
+    const agendaCultural = document.getElementById("agendaCultural");
+    agendaCultural.addEventListener("click", function () {
+        window.location.href = "agenda.html";
+    });
+
     mostrarEventos();
-    actualizarEventosDropdown();
-}
-
-window.addEventListener('load', init);
+});
